@@ -7,6 +7,7 @@
 
 import Order.*;
 import Match.*;
+import java.util.ArrayList;
 
 public class Market {
     public static void main(String[] args) {
@@ -35,5 +36,37 @@ public class Market {
         System.out.println("Ask size: " + orderbook.askSize());
         System.out.println("Match size: " + orderbook.matchSize());
 
+        System.out.println("Are the bids sorted? " + isSorted(toArray(orderbook.getBids())));
+        System.out.println("Are the asks sorted? " + isSorted(toArray(orderbook.getAsks())));
+        System.out.println("The matches: " + orderbook.getMatches());
     }
+
+
+
+    public static double[] toArray(ArrayList<Order> arrayList){
+
+        int n = arrayList.size();
+        double[] array = new double[n];
+
+        for(int i = 0; i < n; i++){
+            array[i] = arrayList.get(i).getPrice();
+        }
+
+        return array;
+    }
+
+    public static boolean isSorted(double[] array){
+
+        boolean isSorted = true;
+
+        for(int i = 1; i < array.length; i++){
+            if(array[i - 1] > array[i]){
+                isSorted = false;
+            }
+        }
+
+        return isSorted;
+    }
+
+
 }

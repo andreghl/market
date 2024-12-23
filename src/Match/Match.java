@@ -1,6 +1,6 @@
 package Match;
 
-/* File: Strategy.java
+/* File: Match.java
  * Author: André-Ignace Ghonda Lukoki
  * 
  * Program: Implement a matching algorithm
@@ -26,5 +26,9 @@ public class Match {
 
     public Order getAsk(){
         return this.ask;
+    }
+
+    public String toString(){
+        return new String("{" + this.bid + ", " + this.ask + "}");
     }
 }

@@ -30,7 +30,7 @@ public class Sorted {
             for(int i = 0; i < n; i++){
                 bid = this.bids.get(i);
                 ask = this.asks.get(i);
-                if(ask.getPrice() > bid.getPrice()){
+                if(ask.getPrice() <= bid.getPrice()){
                     matches.add(new Match(bid, ask));
                 }
             }
@@ -39,7 +39,7 @@ public class Sorted {
             for(int i = 0; i < n; i++){
                 bid = this.bids.get(i);
                 ask = this.asks.get(i);
-                if(ask.getPrice() > bid.getPrice()){
+                if(ask.getPrice() <= bid.getPrice()){
                     matches.add(new Match(bid, ask));
                 }
             }
@@ -69,4 +69,5 @@ public class Sorted {
         }
     }
 
+    // TODO: Find a better name for this algorithm
 }
