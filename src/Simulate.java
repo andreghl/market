@@ -23,14 +23,15 @@ public class Simulate {
 
         double matches = 0;
         double bids = 0;
+        double asks = 0;
 
         for(int t = 0; t < nSimulations; t++){
 
             Book book = new Book();
 
             for(int i = 0; i < nOrders; i++){
-                book.addBid(new Order(Math.random() * 15 + 1));
-                book.addAsk(new Order(Math.random() * 15 + 1));
+                book.addBid(new Order(Math.random() + 10 + 1));
+                book.addAsk(new Order(Math.random() + 10 + 1));
             }
 
             Sorted market = new Sorted(book.getBids(), book.getAsks());
@@ -38,8 +39,12 @@ public class Simulate {
 
             matches += book.matchSize();
             bids += book.bidSize();
+            asks += book.askSize();
+
         }
 
-        return matches / bids;
+        return matches / Math.min(bids, asks);
     }
+
+    // TODO: Improve match rate.
 }
