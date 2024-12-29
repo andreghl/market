@@ -17,7 +17,9 @@ public class Market {
 
         for(int i = 0; i < n; i++){
             orderbook.addBid(new Order(Math.random() * 7 + 1));
+            orderbook.getBids().get(i).setID(i);
             orderbook.addAsk(new Order(Math.random() * 7 + 1));
+            orderbook.getAsks().get(i).setID(i);
         }
 
         System.out.println(orderbook.getBids().getFirst().getTime());
@@ -29,7 +31,7 @@ public class Market {
         System.out.println("The Bid prices are: " + orderbook.getBids());
         System.out.println("The Ask prices are: " + orderbook.getAsks());
 
-        Sorted matching = new Sorted(orderbook.getBids(), orderbook.getAsks());
+        Structure matching = new Structure(orderbook.getBids(), orderbook.getAsks());
 
         orderbook.addMatches(matching.match());
         System.out.println("Bid size: " + orderbook.bidSize());
@@ -62,6 +64,7 @@ public class Market {
         for(int i = 1; i < array.length; i++){
             if(array[i - 1] > array[i]){
                 isSorted = false;
+                break;
             }
         }
 

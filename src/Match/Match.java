@@ -29,6 +29,6 @@ public class Match {
     }
 
     public String toString(){
-        return new String("{" + this.bid + ", " + this.ask + "}");
+        return new String("{" + this.bid.getID() + ": " + this.bid + ", " + this.ask.getID() + ": " + this.ask + "}");
     }
 }

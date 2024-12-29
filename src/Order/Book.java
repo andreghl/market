@@ -76,6 +76,8 @@ public class Book {
         } else { return null; }
     }
 
+
+
     private void sortBids(){
         int n = this.bidSize();
         Order order;

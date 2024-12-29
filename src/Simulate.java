@@ -12,7 +12,7 @@ public class Simulate {
     public static void main(String[] args){
 
         int nSimulations = 10000;
-        int nOrders = 1000;
+        int nOrders = (int) (Math.random() * 1000 + 30);
 
         System.out.println("Simulation of Market matching");
         System.out.println("Proportion of matches: " + simulate(nOrders, nSimulations));
@@ -31,10 +31,12 @@ public class Simulate {
 
             for(int i = 0; i < nOrders; i++){
                 book.addBid(new Order(Math.random() + 10 + 1));
+                book.getBids().get(i).setID(i);
                 book.addAsk(new Order(Math.random() + 10 + 1));
+                book.getAsks().get(i).setID(i);
             }
 
-            Sorted market = new Sorted(book.getBids(), book.getAsks());
+            Structure market = new Structure(book.getBids(), book.getAsks());
             book.addMatches(market.match());
 
             matches += book.matchSize();

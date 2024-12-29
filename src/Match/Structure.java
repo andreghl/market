@@ -3,16 +3,16 @@ package Match;
 import java.util.ArrayList;
 import Order.*;
 
-public class Sorted {
+public class Structure {
     private ArrayList<Order> bids;
     private ArrayList<Order> asks;
 
-    public Sorted(){
+    public Structure(){
         this.bids = new ArrayList<Order>();
         this.asks = new ArrayList<Order>();
     }
 
-    public Sorted(ArrayList<Order> bids, ArrayList<Order> asks){
+    public Structure(ArrayList<Order> bids, ArrayList<Order> asks){
         this.bids = bids;
         this.asks = asks;
     }
@@ -34,7 +34,7 @@ public class Sorted {
                     matches.add(new Match(bid, ask));
                 }
             }
-        } else if(nBids > nAsks){
+        } else {
             n = nAsks;
             for(int i = 0; i < n; i++){
                 bid = this.bids.get(i);
