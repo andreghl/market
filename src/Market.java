@@ -10,66 +10,110 @@ import Match.*;
 import java.util.ArrayList;
 
 public class Market {
-    public static void main(String[] args) {
 
-        Book orderbook = new Book();
-        int n = (int) (Math.random() * 100 + 5);
+    public Book book;
 
-        for(int i = 0; i < n; i++){
-            orderbook.addBid(new Order(Math.random() * 7 + 1));
-            orderbook.getBids().get(i).setID(i);
-            orderbook.addAsk(new Order(Math.random() * 7 + 1));
-            orderbook.getAsks().get(i).setID(i);
-        }
+    private int nOrders;
+    private int nPeriod;
+    private int meanPrice;
 
-        System.out.println(orderbook.getBids().getFirst().getTime());
-        System.out.println("The Bid prices are: " + orderbook.getBids());
-        System.out.println("The Ask prices are: " + orderbook.getAsks());
+    private int matchSize;
+    private ArrayList<Double> matchRates;
+    private double matchRate;
 
-        orderbook.sort();
-        System.out.println(orderbook.getBids().getFirst().getTime());
-        System.out.println("The Bid prices are: " + orderbook.getBids());
-        System.out.println("The Ask prices are: " + orderbook.getAsks());
+    private ArrayList<Double> prices;
+    private double price;
 
-        Structure matching = new Structure(orderbook.getBids(), orderbook.getAsks());
+    private ArrayList<Double> matchedPrices;
+    private double matchedPrice;
 
-        orderbook.addMatches(matching.match());
-        System.out.println("Bid size: " + orderbook.bidSize());
-        System.out.println("Ask size: " + orderbook.askSize());
-        System.out.println("Match size: " + orderbook.matchSize());
 
-        System.out.println("Are the bids sorted? " + isSorted(toArray(orderbook.getBids())));
-        System.out.println("Are the asks sorted? " + isSorted(toArray(orderbook.getAsks())));
-        System.out.println("The matches: " + orderbook.getMatches());
+    public static void main(String[] args){
+
+        Market market = new Market();
+        market.run();
+        market.stats();
     }
 
+    public Market(){
 
+        this.nOrders = 100;
+        this.nPeriod = 10;
+        this.meanPrice = 7;
+        this.matchSize = 0;
+        this.matchRate = 0;
 
-    public static double[] toArray(ArrayList<Order> arrayList){
-
-        int n = arrayList.size();
-        double[] array = new double[n];
-
-        for(int i = 0; i < n; i++){
-            array[i] = arrayList.get(i).getPrice();
-        }
-
-        return array;
+        this.prices = new ArrayList<Double>();
+        this.matchedPrices = new ArrayList<Double>();
+        this.matchRates = new ArrayList<Double>();
     }
 
-    public static boolean isSorted(double[] array){
+    public Market(int nOrders, int nPeriod, int meanPrice){
 
-        boolean isSorted = true;
+        this.nOrders = nOrders;
+        this.nPeriod = nPeriod;
+        this.meanPrice = meanPrice;
 
-        for(int i = 1; i < array.length; i++){
-            if(array[i - 1] > array[i]){
-                isSorted = false;
-                break;
+        this.prices = new ArrayList<Double>();
+        this.matchedPrices = new ArrayList<Double>();
+        this.matchRates = new ArrayList<Double>();
+    }
+
+    public void run(){
+
+        for(int n = 0; n < this.nPeriod; n++){
+            this.book = new Book();
+
+            for(int i = 0; i < this.nOrders; i++){
+
+                book.addBid(new Order(Math.random() * meanPrice + 1));
+                book.getBids().get(i).setID(i);
+                book.addAsk(new Order(Math.random() * meanPrice + 1));
+                book.getAsks().get(i).setID(i);
             }
+
+            Structure matching = new Structure(book.getBids(), book.getAsks());
+            book.addMatches(matching.match());
+
+            this.matchSize += book.matchSize();
+
+            book.sort();
+            this.price = (book.getAsks().getFirst().getPrice() + book.getBids().getLast().getPrice()) / 2;
+            this.prices.add(price);
+
+            for(int i = 0; i < this.nOrders; i++){
+
+                if(book.getAsks().get(i).isMatched()){
+                    this.matchedPrice += book.getAsks().get(i).getPrice() / 2;
+                    break;
+                }
+            }
+
+            for(int i = this.nOrders - 1; i >= 0; i--){
+                
+                if(book.getBids().get(i).isMatched()){
+                    this.matchedPrice += book.getBids().get(i).getPrice() / 2;
+                    break;
+                }
+            }
+
+            this.matchedPrices.add(this.matchedPrice);
+            this.matchedPrice = 0;
+            this.matchRates.add((double) book.matchSize() / this.nOrders);
         }
 
-        return isSorted;
+        this.matchRate =  (double) this.matchSize / (this.nOrders * this.nPeriod);
     }
 
+    public void stats(){
 
+        System.out.println("The market was run for " + this.nPeriod + " periods.");
+        System.out.println("The mean market price is " + this.meanPrice + " and the maximum number of bids is " + nOrders + ".");
+        System.out.println("The match rate is " + this.matchRate + ".");
+        System.out.println(this.matchRates + "\n");
+        System.out.println("The prices for this market were: ");
+        System.out.println(this.prices + "\n");
+        System.out.println("The prices for the matches in the market were: ");
+        System.out.println(this.matchedPrices + "\n");
+    }
 }

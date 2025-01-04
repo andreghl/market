@@ -68,6 +68,4 @@ public class Structure {
             }
         }
     }
-
-    // TODO: Find a better name for this algorithm
 }

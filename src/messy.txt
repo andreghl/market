@@ -1,0 +1,32 @@
+public static double[] toArray(ArrayList<Order> arrayList){
+
+    int n = arrayList.size();
+    double[] array = new double[n];
+
+    for(int i = 0; i < n; i++){
+        array[i] = arrayList.get(i).getPrice();
+    }
+
+    return array;
+}
+
+public static boolean isSorted(double[] array){
+
+    boolean isSorted = true;
+
+    for(int i = 1; i < array.length; i++){
+        if(array[i - 1] > array[i]){
+            isSorted = false;
+            break;
+        }
+    }
+
+    return isSorted;
+}
+
+// TODO: The market price could be determined by the lowest ask price and highest bid price.
+
+/* Market Price
+    * The price shown in exchanges is the last transaction price i.e (bid + ask) / 2, or the mean
+    * of the last prices. 
+    */
