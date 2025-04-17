@@ -5,9 +5,7 @@
  * in which n players trade one good.
  */
 
-import Order.*;
-import Match.*;
-import java.util.ArrayList;
+import Market.*;
 
 public class Market {
 
@@ -16,104 +14,71 @@ public class Market {
     private int nOrders;
     private int nPeriod;
     private int meanPrice;
-
-    private int matchSize;
-    private ArrayList<Double> matchRates;
-    private double matchRate;
-
-    private ArrayList<Double> prices;
-    private double price;
-
-    private ArrayList<Double> matchedPrices;
-    private double matchedPrice;
-
-
-    public static void main(String[] args){
-
-        Market market = new Market();
-        market.run();
-        market.stats();
-    }
+    public boolean isOpen;
 
     public Market(){
 
         this.nOrders = 100;
-        this.nPeriod = 10;
-        this.meanPrice = 7;
-        this.matchSize = 0;
-        this.matchRate = 0;
-
-        this.prices = new ArrayList<Double>();
-        this.matchedPrices = new ArrayList<Double>();
-        this.matchRates = new ArrayList<Double>();
+        this.meanPrice = 10;
     }
 
-    public Market(int nOrders, int nPeriod, int meanPrice){
+    public Market(int nOrders, int meanPrice){
 
         this.nOrders = nOrders;
-        this.nPeriod = nPeriod;
         this.meanPrice = meanPrice;
+        this.book = new Book();
+        this.isOpen = true;
+    }
 
-        this.prices = new ArrayList<Double>();
-        this.matchedPrices = new ArrayList<Double>();
-        this.matchRates = new ArrayList<Double>();
+    private void trade(){
+
+        double order = Math.random() + meanPrice + 1;
+        order = Math.round(order * 100.0) / 100.0;
+
+        if(Math.random() > 0.5){
+            book.bid(new Order(order));
+        } else {
+            book.ask(new Order(order));
+        }
     }
 
     public void run(){
 
-        for(int n = 0; n < this.nPeriod; n++){
-            this.book = new Book();
-
-            for(int i = 0; i < this.nOrders; i++){
-
-                book.addBid(new Order(Math.random() * meanPrice + 1));
-                book.getBids().get(i).setID(i);
-                book.addAsk(new Order(Math.random() * meanPrice + 1));
-                book.getAsks().get(i).setID(i);
-            }
-
-            Structure matching = new Structure(book.getBids(), book.getAsks());
-            book.addMatches(matching.match());
-
-            this.matchSize += book.matchSize();
-
+        while (isOpen) {
+            trade();
             book.sort();
-            this.price = (book.getAsks().getFirst().getPrice() + book.getBids().getLast().getPrice()) / 2;
-            this.prices.add(price);
 
-            for(int i = 0; i < this.nOrders; i++){
+            int a = 0; int b = 0;
+            
+            while(a < book.askSize() && b < book.bidSize()){
+                while(book.getAsks().get(a).isMatched()){
+                    a++;
+                }
 
-                if(book.getAsks().get(i).isMatched()){
-                    this.matchedPrice += book.getAsks().get(i).getPrice() / 2;
-                    break;
+                while(book.getBids().get(b).isMatched()){
+                    b++;
+                }
+
+                Order ask = book.getAsks().get(a);
+                Order bid = book.getBids().get(b);
+
+                if(bid.getPrice() > ask.getPrice()){
+                    bid.match(ask);
+                    ask.match(bid);
+                    a++; b++;
+                } else if(a < b){
+                    a++;
+                } else {
+                    b++;
                 }
             }
 
-            for(int i = this.nOrders - 1; i >= 0; i--){
-                
-                if(book.getBids().get(i).isMatched()){
-                    this.matchedPrice += book.getBids().get(i).getPrice() / 2;
-                    break;
-                }
+            if(book.size() > nOrders){
+                isOpen = false;
             }
 
-            this.matchedPrices.add(this.matchedPrice);
-            this.matchedPrice = 0;
-            this.matchRates.add((double) book.matchSize() / this.nOrders);
+            
         }
 
-        this.matchRate =  (double) this.matchSize / (this.nOrders * this.nPeriod);
-    }
-
-    public void stats(){
-
-        System.out.println("The market was run for " + this.nPeriod + " periods.");
-        System.out.println("The mean market price is " + this.meanPrice + " and the maximum number of bids is " + nOrders + ".");
-        System.out.println("The match rate is " + this.matchRate + ".");
-        System.out.println(this.matchRates + "\n");
-        System.out.println("The prices for this market were: ");
-        System.out.println(this.prices + "\n");
-        System.out.println("The prices for the matches in the market were: ");
-        System.out.println(this.matchedPrices + "\n");
     }
 }

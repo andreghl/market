@@ -1,0 +1,12 @@
+MARKET MODEL
+==============
+
+This codebase contains code that attempts to simulate the processes and investors' behavior in double auctions. 
+
+MATCHING
+---------------------
+
+The main condition for a match is that bid price > ask price but generally sellers want to sell at a high price (upward pressure on ask prices) and buyer want to buy at a lower price (downward pressure on bid prices).
+
+asks = [53, 79, 85, 90, 94, 98, 113, 121]
+bids = [37, 69, 82, 82, 91, 112, 120, 125]
